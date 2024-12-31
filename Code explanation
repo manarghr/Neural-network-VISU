@@ -14,7 +14,18 @@ CODE EXPLANATION :
 #define NEURON_RADIUS 30    --> this defines the the size of each neuron.
 
 typedef struct neuron{
-   float x, y;     -->  x represents the horizontal position of the neuron, y represents the vertical position of the neuron.
-   float base_y;   -->  helps keep track of the original position for animation.
-   Color color;    -->  defines the color of the neuron.
+   float x, y;              -->  x represents the horizontal position of the neuron, y represents the vertical position of the neuron.
+   float base_y;            -->  helps keep track of the original position for animation.
+   Color color;             -->  defines the color of the neuron.
 } Neuron;
+
+Neuron CreateNeuron(float x, float y, Color color){
+  Neuron neuron ;           --> creating a variable "neuron" of type Neuron.
+  neuron.x = x;             --> sets the horizontal position x of the neuron (ex : x=100.0f sets position to 100 pixels from the left of the screen).
+  neuron.y = y;             --> sets the vertical position y of the neuron (ex : y=100.0f sets position to 100 pixels from the top of the screen).
+  neuron.base_y = y;        --> keeps track of where the neuron started, if it moves you can refer to this original position).
+  neuron.color = color;     --> sets the color of the neuron ( ex : color=GREEN the neuron will be green).
+  return neuron;
+}
+
+
