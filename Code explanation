@@ -1,0 +1,20 @@
+WHAT IS RAYLIB ? 
+Raylib is a simple C library designed for creating games and multimedia applications.
+It provides functions for handling graphics, audio, window management.
+
+CODE EXPLANATION : 
+
+#include"raylib.h"  --> this library provides functions for graphics, it is used for the creation of the window, the neurons (circles) and the lines (connections).
+#include<math.h>    --> this math library in C provides mathematical functions like sin() used to make the neurons move (bounce up and down over time).
+#include<stdlib.h>  --> the standard library provides functions for memory allocation, random number generation and program control.
+
+
+#define SCREEN_WIDTH 1200   --> the window will be 1200 pixels wide.
+#define SCREEN_HEIGHT 600   --> and 600 pixels tall.
+#define NEURON_RADIUS 30    --> this defines the the size of each neuron.
+
+typedef struct neuron{
+   float x, y;     -->  x represents the horizontal position of the neuron, y represents the vertical position of the neuron.
+   float base_y;   -->  helps keep track of the original position for animation.
+   Color color;    -->  defines the color of the neuron.
+} Neuron;
