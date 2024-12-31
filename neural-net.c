@@ -1,13 +1,15 @@
-#include "raylib.h"
-#include <math.h>
-#include <stdlib.h>
+#include"raylib.h"
+#include<math.h>
+#include<stdlib.h>
 
-/* The window's dimensions*/
+/*creating the window*/
+
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 600
-#define NEURON_RADIUS 20
+#define NEURON_RADIUS 30
 
 /*Defining a neuron*/
+
 typedef struct Neuron {
     float x, y;
     float base_y;
