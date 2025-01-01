@@ -1,4 +1,4 @@
-Neural Network Visualization using Raylib and Notepad++
+# **Neural Network Visualization using Raylib and Notepad++**
 
 I initially started with SDL for the project, but i faced various issues and difficulties in setting it up. So, I switched to Raylib and used Notepad++ as a code editor and it worked. 
 
