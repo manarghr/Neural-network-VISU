@@ -86,4 +86,19 @@ while (!WindowShouldClose()) {                                          --> this
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+/* Draw neurons*/
+        for (int i = 0; i < num_layers; i++) {                                                                   --> outer loop that goes through each layer.
+            int num_neurons = neurons_per_layer[i];                                                              --> gets the nbr of neurons in each layer.
+            for (int j = 0; j < num_neurons; j++) {                                                              --> loop that goes through each neuron in the current layer ( j=0 first neuron, j=1 is the second....).
+                neurons[i][j].y = neurons[i][j].base_y + sin(time + neurons[i][j].x * 0.01f) * 10.0f;            --> this adds a wiggling motion.
+                DrawCircleV((Vector2){neurons[i][j].x, neurons[i][j].y}, NEURON_RADIUS, neurons[i][j].color);    --> this function draws the neuron as a circle in the screen.
+            }
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
+}
 
