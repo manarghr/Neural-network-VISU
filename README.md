@@ -5,5 +5,7 @@ I initially started with SDL for the project, but i faced various issues and dif
 ### How to use them both ? 
 1) Install Raylib via https://raysan5.itch.io/raylib
 2) Install Notepad++ via https://notepad-plus-plus.org/downloads
-3) Now, Open Notepad++, then go to file > open > now go to "Disque Local" where the raylib folder is and then click on it > npp > click on Notepad++.exe 
+3) Now, Open files then> "Disque Local" where the raylib folder is and then click on it > raylib > examples > core > click on core_basic_window.c
+4) the file appears in Notepad++, then go to plugins > admin > download NppExec and NppExecScript
+5) After that, you can modify the file "core_basic_window.c" and write the code you want there, and that's it.
 
