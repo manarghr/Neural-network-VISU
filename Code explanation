@@ -8,21 +8,16 @@ CODE EXPLANATION :
 #include<math.h>    --> this math library in C provides mathematical functions like sin() used to make the neurons move (bounce up and down over time).
 #include<stdlib.h>  --> the standard library provides functions for memory allocation, random number generation and program control.
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#define SCREEN_WIDTH 1200   --> the window will be 1200 pixels wide.
-#define SCREEN_HEIGHT 600   --> and 600 pixels tall.
-#define NEURON_RADIUS 30    --> this defines the the size of each neuron.
-
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 typedef struct neuron{
    float x, y;              -->  x represents the horizontal position of the neuron, y represents the vertical position of the neuron.
    float base_y;            -->  helps keep track of the original position for animation.
    Color color;             -->  defines the color of the neuron.
 } Neuron;
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Neuron CreateNeuron(float x, float y, Color color){
   Neuron neuron ;           --> creating a variable "neuron" of type Neuron.
@@ -33,25 +28,23 @@ Neuron CreateNeuron(float x, float y, Color color){
   return neuron;
 }
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int main (){
 InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Neural Network Visualization");
     SetTargetFPS(60);         --> sets how fast the window updates (60 frames per second in this case), helps make sure it runs at constant speed.
    
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int num_layers = 4;                             --> number of layers in the neural network.
     int neurons_per_layer[] = {2, 4, 4, 1};     --> an array that has a list of the number of neurons of each layer.
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-float layer_spacing = SCREEN_WIDTH / (num_layers + 1);
+float layer_spacing = SCREEN_WIDTH / (num_layers + 1);          --> num_layers is 4, so adding 1 ensures that there's some space between first and last layers so num_layers is 5 now.
+                                                                    also SCREEN_WIDTH / (num_layers + 1) this division creates how much horizontal space should be allocated for each layer.
 
-num_layers is 4, so by adding 1 ensures that there's some space between first and last layers so num_layers is 5 now.
-also SCREEN_WIDTH / (num_layers + 1) this division creates how much horizontal space should be allocated for each layer.
-
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Neuron neurons[10][10];     --> 2d array that can hold up 10 layers and up to 10 neurons per layer.
 
@@ -68,5 +61,29 @@ Neuron neurons[10][10];     --> 2d array that can hold up 10 layers and up to 10
     }
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
+   
+while (!WindowShouldClose()) {                                          --> this loop keeps the program running as long as the window is open.
+        time += GetFrameTime();                                         -->
+
+        BeginDrawing();                                                 --> prepare the screen to begin drawing. 
+        ClearBackground(BLACK);                                         --> black background on the window before the drawing.
+
+        /*Connecting the layers*/
+        for (int i = 0; i < num_layers - 1; i++) {                      --> outer loop that iterates through the layers of the neural network. And it stops at num_layers - 1 because it connects each layer to the next one.
+            int num_neurons_current = neurons_per_layer[i];             --> finding the number of neurons in the current layer.
+            int num_neurons_next = neurons_per_layer[i + 1];            --> finding the number of neurons in the next layer.
+
+            for (int j = 0; j < num_neurons_current; j++) {             --> inner loop, j loop iterates through each neuron of the current layer.
+                for (int k = 0; k < num_neurons_next; k++) {            --> inner loop 2, k iterates through each neuron of the next layer.
+                        DrawLine(                                       
+                        neurons[i][j].x, neurons[i][j].y,               --> start points x,y of the current neuron.
+                        neurons[i + 1][k].x, neurons[i + 1][k].y,       --> end points x,y of the next neuron.
+                        GRAY                                            -->  lines color.
+                    );
+                }
+            }
+        }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
