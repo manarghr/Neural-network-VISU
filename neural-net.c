@@ -56,7 +56,7 @@ int main() {
         }
     }
     
-    float time = 0.0f;
+    float time = 0.0f;     /*initialize time to 0 to start the program*/
 
     while (!WindowShouldClose()) {
         time += GetFrameTime();
@@ -65,6 +65,7 @@ int main() {
         ClearBackground(BLACK);
 
         /*Connecting the layers*/
+        
         for (int i = 0; i < num_layers - 1; i++) {
             int num_neurons_current = neurons_per_layer[i];
             int num_neurons_next = neurons_per_layer[i + 1];
@@ -81,10 +82,11 @@ int main() {
         }
 
         /* Draw neurons*/
+       
         for (int i = 0; i < num_layers; i++) {
             int num_neurons = neurons_per_layer[i];
             for (int j = 0; j < num_neurons; j++) {
-                neurons[i][j].y = neurons[i][j].base_y + sin(time + neurons[i][j].x * 0.01f) * 10.0f; // Add oscillation effect
+                neurons[i][j].y = neurons[i][j].base_y + sin(time + neurons[i][j].x * 0.01f) * 10.0f; /*Adds a wiggling effect*/
                 DrawCircleV((Vector2){neurons[i][j].x, neurons[i][j].y}, NEURON_RADIUS, neurons[i][j].color);
             }
         }
