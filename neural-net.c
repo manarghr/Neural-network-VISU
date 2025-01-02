@@ -12,8 +12,8 @@
 
 typedef struct Neuron {
     float x, y;
-    float base_y;
     Color color;
+    float alpha;
 } Neuron;
 
 /*Creating a neuron*/
@@ -22,8 +22,8 @@ Neuron CreateNeuron(float x, float y, Color color) {
     Neuron neuron;
     neuron.x = x;
     neuron.y = y;
-    neuron.base_y = y;
     neuron.color = color;
+    neuron.alpha = alpha;
     return neuron;
 }
 
@@ -34,8 +34,8 @@ int main() {
 
     /*How's this neural network made (layers & neurons per layer) */
    
-    int num_layers = 4;
-    int neurons_per_layer[] = {2, 4, 4, 1};
+    int num_layers = 5;
+    int neurons_per_layer[] = {8, 10, 10, 1};
 
     /*Layers positioned horizontally*/
     
@@ -52,14 +52,30 @@ int main() {
             float x = (i + 1) * layer_spacing;
             float y = (j + 1) * vertical_spacing;
             Color color = (i == 0) ? BLUE : ((i == num_layers - 1) ? RED : GREEN);
-            neurons[i][j] = CreateNeuron(x, y, color);
+            neurons[i][j] = CreateNeuron(x, y, color, 0.3f);
         }
     }
     
-    float time = 0.0f;     /*initialize time to 0 to start the program*/
-
+    float time = 0.0f;   /*initialize time to 0 to start the program*/
+    int active_layer = 0;
+    int direction = 1;
+    float layer_duration = 2.0;
+    float layer_progress = 0.0;
+   
+    
     while (!WindowShouldClose()) {
         time += GetFrameTime();
+        layer_progress += GetFrameTime();
+
+         /* Switch active layer when layer_progress exceeds duration*/
+       
+        if (layer_progress > layer_duration) {
+            layer_progress = 0.0;
+            active_layer += direction;
+            if (active_layer == 0 || active_layer == num_layers - 1) {
+                direction *= -1;
+            }
+        }
 
         BeginDrawing();
         ClearBackground(BLACK);
@@ -72,7 +88,21 @@ int main() {
 
             for (int j = 0; j < num_neurons_current; j++) {
                 for (int k = 0; k < num_neurons_next; k++) {
-                    DrawLine(
+                    float alpha = (i == active_layer || i + 1 == active_layer) ? 0.8f : 0.3f;
+
+                    DrawLineEx(
+                        (Vector2){neurons[i][j].x, neurons[i][j].y},
+                        (Vector2){neurons[i + 1][k].x, neurons[i + 1][k].y},
+                        2.0f,
+                        Fade(GRAY, alpha)
+                    );
+                }
+            }
+        }
+
+                   
+        
+                        DrawLine(
                         neurons[i][j].x, neurons[i][j].y,
                         neurons[i + 1][k].x, neurons[i + 1][k].y,
                         GRAY
