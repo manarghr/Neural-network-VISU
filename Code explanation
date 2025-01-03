@@ -24,7 +24,7 @@ Neuron CreateNeuron(float x, float y, Color color, float alpha){
   neuron.x = x;             --> sets the horizontal position x of the neuron (ex : x=100.0f sets position to 100 pixels from the left of the screen).
   neuron.y = y;             --> sets the vertical position y of the neuron (ex : y=100.0f sets position to 100 pixels from the top of the screen).
   neuron.color = color;     --> sets the color of the neuron ( ex : color=GREEN the neuron will be green).
-  neuron.alpha = apha;
+  neuron.alpha = apha;      --> sets the transparency of the neuron.
 return neuron;
 }
 
@@ -63,10 +63,10 @@ Neuron neurons[5][10];     --> 2d array that can hold up 5 layers and up to 10 n
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float time = 0.0f;   /*initialize time to 0 to start the program*/
-    int active_layer = 0;
-    int direction = 1;
-    float layer_duration = 2.0;
-    float layer_progress = 0.0;
+    int active_layer = 0; /*current active layer*/
+    int direction = 1;    /*Direction for active layer movement*/
+    float layer_duration = 2.0;  /*time for a layer to stay active*/
+    float layer_progress = 0.0;  
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,12 +76,12 @@ Neuron neurons[5][10];     --> 2d array that can hold up 5 layers and up to 10 n
 
 
 while (!WindowShouldClose()) {                                          --> this loop keeps the program running as long as the window is open.
-        time += GetFrameTime();       
-        layer_progress += GetFrameTime();
+        time += GetFrameTime();                                         --> update time 
+        layer_progress += GetFrameTime();                               --> update layer progress.
 
-       if (layer_progress > layer_duration)  {
-            layer_progress = 0.0;
-            active_layer += direction;
+       if (layer_progress > layer_duration)  {                          --> check if the layer duration is complete.
+            layer_progress = 0.0;                                       --> reset progress
+            active_layer += direction;                                  --> move to the next or the previous layer.
             
             if (active_layer == 0 || active_layer == num_layers - 1) {
                 direction *= -1;
@@ -99,14 +99,14 @@ while (!WindowShouldClose()) {                                          --> this
             int num_neurons_next = neurons_per_layer[i + 1];            --> finding the number of neurons in the next layer.
 
             for (int j = 0; j < num_neurons_current; j++) {             --> inner loop, j loop iterates through each neuron of the current layer.
-                for (int k = 0; k < num_neurons_next; k++) {  --> inner loop 2, k iterates through each neuron of the next layer.
-                  float alpha = (i == active_layer || i + 1 == active_layer) ? 0.8f : 0.3f;
+                for (int k = 0; k < num_neurons_next; k++) {            --> inner loop 2, k iterates through each neuron of the next layer.
+                  float alpha = (i == active_layer || i + 1 == active_layer) ? 0.8f : 0.3f;  --> set line transparency.
 
                     DrawLineEx(
-                        (Vector2){neurons[i][j].x, neurons[i][j].y},
-                        (Vector2){neurons[i + 1][k].x, neurons[i + 1][k].y},
+                        (Vector2){neurons[i][j].x, neurons[i][j].y},  --> start position of the line.
+                        (Vector2){neurons[i + 1][k].x, neurons[i + 1][k].y},  --> end position of the line.
                         2.0f,
-                        Fade(GRAY, alpha)
+                        Fade(GRAY, alpha)        --> line color and transparency.
                     );
                 }
             }
@@ -120,15 +120,15 @@ while (!WindowShouldClose()) {                                          --> this
             for (int j = 0; j < num_neurons; j++) {                                                              --> loop that goes through each neuron in the current layer ( j=0 first neuron, j=1 is the second....).
 
                if (i== active_layer) {
-                neurons[i][j].alpha = 0.3f + 0.7f * fabs(sin(layer_progress / layer_duration * PI ));
+                neurons[i][j].alpha = 0.3f + 0.7f * fabs(sin(layer_progress / layer_duration * PI ));            --> pulse effect for active neurons
                 } else {
-                    neurons[i][j].alpha = 0.3f;
+                    neurons[i][j].alpha = 0.3f;            --> default transparency for inactive neurons
             }
 
                 DrawCircleV(
-                    (Vector2){neurons[i][j].x, neurons[i][j].y},
+                    (Vector2){neurons[i][j].x, neurons[i][j].y}, --> position of the neuron
                     NEURON_RADIUS,
-                    Fade(neurons[i][j].color, neurons[i][j].alpha)
+                    Fade(neurons[i][j].color, neurons[i][j].alpha)  --> color and transparency of neuron
                     );
         }
         }
