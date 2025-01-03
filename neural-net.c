@@ -6,7 +6,7 @@
 
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 600
-#define NEURON_RADIUS 30
+#define NEURON_RADIUS 20
 
 /*Defining a neuron*/
 
@@ -18,7 +18,7 @@ typedef struct Neuron {
 
 /*Creating a neuron*/
 
-Neuron CreateNeuron(float x, float y, Color color) {
+Neuron CreateNeuron(float x, float y, Color color, float alpha) {
     Neuron neuron;
     neuron.x = x;
     neuron.y = y;
@@ -35,14 +35,14 @@ int main() {
     /*How's this neural network made (layers & neurons per layer) */
    
     int num_layers = 5;
-    int neurons_per_layer[] = {8, 10, 10, 1};
+    int neurons_per_layer[] = {8, 10, 10, 10, 1};
 
-    /*Layers positioned horizontally*/
+    /*Layers space horizontally*/
     
     float layer_spacing = SCREEN_WIDTH / (num_layers + 1);
 
     /*Neuron vertical spacing per layer*/
-    Neuron neurons[10][10]; 
+    Neuron neurons[5][10]; 
 
     for (int i = 0; i < num_layers; i++) {
         int num_neurons = neurons_per_layer[i];
@@ -100,25 +100,25 @@ int main() {
             }
         }
 
-                   
-        
-                        DrawLine(
-                        neurons[i][j].x, neurons[i][j].y,
-                        neurons[i + 1][k].x, neurons[i + 1][k].y,
-                        GRAY
-                    );
-                }
-            }
-        }
 
         /* Draw neurons*/
        
         for (int i = 0; i < num_layers; i++) {
             int num_neurons = neurons_per_layer[i];
             for (int j = 0; j < num_neurons; j++) {
-                neurons[i][j].y = neurons[i][j].base_y + sin(time + neurons[i][j].x * 0.01f) * 10.0f; /*Adds a wiggling effect*/
-                DrawCircleV((Vector2){neurons[i][j].x, neurons[i][j].y}, NEURON_RADIUS, neurons[i][j].color);
+
+                if (i== active_layer) {
+                neurons[i][j].alpha = 0.3f + 0.7f * fabs(sin(layer_progress / layer_duration * PI ));
+                } else {
+                    neurons[i][j].alpha = 0.3f;
             }
+
+                DrawCircleV(
+                    (Vector2){neurons[i][j].x, neurons[i][j].y},
+                    NEURON_RADIUS,
+                    Fade(neurons[i][j].color, neurons[i][j].alpha)
+                    );
+        }
         }
 
         EndDrawing();
