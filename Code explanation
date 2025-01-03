@@ -13,19 +13,19 @@ CODE EXPLANATION :
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 typedef struct neuron{
    float x, y;              -->  x represents the horizontal position of the neuron, y represents the vertical position of the neuron.
-   float base_y;            -->  helps keep track of the original position for animation.
    Color color;             -->  defines the color of the neuron.
+   float alpha;
 } Neuron;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Neuron CreateNeuron(float x, float y, Color color){
+Neuron CreateNeuron(float x, float y, Color color, float alpha){
   Neuron neuron ;           --> creating a variable "neuron" of type Neuron.
   neuron.x = x;             --> sets the horizontal position x of the neuron (ex : x=100.0f sets position to 100 pixels from the left of the screen).
   neuron.y = y;             --> sets the vertical position y of the neuron (ex : y=100.0f sets position to 100 pixels from the top of the screen).
-  neuron.base_y = y;        --> keeps track of where the neuron started, if it moves you can refer to this original position).
   neuron.color = color;     --> sets the color of the neuron ( ex : color=GREEN the neuron will be green).
-  return neuron;
+  neuron.alpha = apha;
+return neuron;
 }
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Neural Network Visualization");
    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int num_layers = 4;                             --> number of layers in the neural network.
-    int neurons_per_layer[] = {2, 4, 4, 1};     --> an array that has a list of the number of neurons of each layer.
+int num_layers = 5;                             --> number of layers in the neural network.
+    int neurons_per_layer[] = {8, 10, 10, 10, 1};     --> an array that has a list of the number of neurons of each layer.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ float layer_spacing = SCREEN_WIDTH / (num_layers + 1);          --> num_layers i
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Neuron neurons[10][10];     --> 2d array that can hold up 10 layers and up to 10 neurons per layer.
+Neuron neurons[5][10];     --> 2d array that can hold up 5 layers and up to 10 neurons per layer.
 
     for (int i = 0; i < num_layers; i++) {                                    --> the outer loop that will iterate over each layer in the neural network (4).
         int num_neurons = neurons_per_layer[i];                               --> the array that holds the number of neurons for each layer.
@@ -56,14 +56,39 @@ Neuron neurons[10][10];     --> 2d array that can hold up 10 layers and up to 10
             float x = (i + 1) * layer_spacing;                                -->calculates the horizontal position (x) for the current neuron.
           float y = (j + 1) * vertical_spacing;                               -->calculates the vertical position (y) for the current neuron.
             Color color = (i == 0) ? BLUE : ((i == num_layers - 1) ? RED : GREEN);         --> assigns a color to the neuron based on which layer it belongs to ( ex : if i=0 it means the input layer so it's blue).
-            neurons[i][j] = CreateNeuron(x, y, color);                                     -->creates a neuron using the CreateNeuron function and stores it in the neurons array at the appropriate position.
+            neurons[i][j] = CreateNeuron(x, y, color, 0.3f);                                     -->creates a neuron using the CreateNeuron function and stores it in the neurons array at the appropriate position.
         }
     }
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   
+
+    float time = 0.0f;   /*initialize time to 0 to start the program*/
+    int active_layer = 0;
+    int direction = 1;
+    float layer_duration = 2.0;
+    float layer_progress = 0.0;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 while (!WindowShouldClose()) {                                          --> this loop keeps the program running as long as the window is open.
-        time += GetFrameTime();                                         -->
+        time += GetFrameTime();       
+        layer_progress += GetFrameTime();
+
+       if (layer_progress > layer_duration)  {
+            layer_progress = 0.0;
+            active_layer += direction;
+            
+            if (active_layer == 0 || active_layer == num_layers - 1) {
+                direction *= -1;
+            }
+
+       }
+
 
         BeginDrawing();                                                 --> prepare the screen to begin drawing. 
         ClearBackground(BLACK);                                         --> black background on the window before the drawing.
@@ -74,15 +99,18 @@ while (!WindowShouldClose()) {                                          --> this
             int num_neurons_next = neurons_per_layer[i + 1];            --> finding the number of neurons in the next layer.
 
             for (int j = 0; j < num_neurons_current; j++) {             --> inner loop, j loop iterates through each neuron of the current layer.
-                for (int k = 0; k < num_neurons_next; k++) {            --> inner loop 2, k iterates through each neuron of the next layer.
-                        DrawLine(                                       
-                        neurons[i][j].x, neurons[i][j].y,               --> start points x,y of the current neuron.
-                        neurons[i + 1][k].x, neurons[i + 1][k].y,       --> end points x,y of the next neuron.
-                        GRAY                                            -->  lines color.
+                for (int k = 0; k < num_neurons_next; k++) {  --> inner loop 2, k iterates through each neuron of the next layer.
+                  float alpha = (i == active_layer || i + 1 == active_layer) ? 0.8f : 0.3f;
+
+                    DrawLineEx(
+                        (Vector2){neurons[i][j].x, neurons[i][j].y},
+                        (Vector2){neurons[i + 1][k].x, neurons[i + 1][k].y},
+                        2.0f,
+                        Fade(GRAY, alpha)
                     );
                 }
             }
-        }
+        }       
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -90,12 +118,23 @@ while (!WindowShouldClose()) {                                          --> this
         for (int i = 0; i < num_layers; i++) {                                                                   --> outer loop that goes through each layer.
             int num_neurons = neurons_per_layer[i];                                                              --> gets the nbr of neurons in each layer.
             for (int j = 0; j < num_neurons; j++) {                                                              --> loop that goes through each neuron in the current layer ( j=0 first neuron, j=1 is the second....).
-                neurons[i][j].y = neurons[i][j].base_y + sin(time + neurons[i][j].x * 0.01f) * 10.0f;            --> this adds a wiggling motion.
-                DrawCircleV((Vector2){neurons[i][j].x, neurons[i][j].y}, NEURON_RADIUS, neurons[i][j].color);    --> this function draws the neuron as a circle in the screen.
+
+               if (i== active_layer) {
+                neurons[i][j].alpha = 0.3f + 0.7f * fabs(sin(layer_progress / layer_duration * PI ));
+                } else {
+                    neurons[i][j].alpha = 0.3f;
             }
+
+                DrawCircleV(
+                    (Vector2){neurons[i][j].x, neurons[i][j].y},
+                    NEURON_RADIUS,
+                    Fade(neurons[i][j].color, neurons[i][j].alpha)
+                    );
+        }
         }
 
         EndDrawing();
+            
     }
 
     CloseWindow();
